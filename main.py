@@ -61,10 +61,24 @@ class pipe:
     def __init__(self, x):
         self.x = x
         self.random_rectangle = calculate_pipe_space()
-        self.pipe_vertical = calculate_pipe_vertical(self.random_rectangle)
+        self.pipe_vertical = calculate_pipe_vertical(self.random_rectangle) 
+
+    def get_width(self):
+        return self.pipe_vertical["pipe_width"]
+
+    def get_top_y(self):
+        return self.pipe_vertical["top_y"]
+    def get_bot_y(self):
+        return self.pipe_vertical["bottom_y"]
+
+    def get_top_h(self):
+        return self.pipe_vertical["top_pipe_height"]
+    def get_bot_h(self):
+        return self.pipe_vertical["bottom_pipe_height"]
 
     def draw(self):
-        pass #perhaps we can store each pipe in a list and draw each by calling this draw function 
+        pygame.draw.rect(win, (0, 255, 0), (self.x, self.get_top_y(), self.get_width(), self.get_top_h()))
+        pygame.draw.rect(win, (0, 255, 0), (self.x, self.get_bot_y(), self.get_width(), self.get_bot_h()))
 
 y = 200
 x = 450
@@ -73,7 +87,9 @@ x = 450
 
 
 
-new_pipes = calculate_pipe_vertical(calculate_pipe_space())
+#new_pipes = calculate_pipe_vertical(calculate_pipe_space())
+new_pipe_obj = pipe(x)
+
 #multiple pipes logic:
 #init new pipe class = lead_pipe
 #when lead_pipe reaches x = num, lead_pipe = pipe() so make a new pipe class #goes outside for loop but inside while loop 
@@ -83,7 +99,11 @@ new_pipes = calculate_pipe_vertical(calculate_pipe_space())
 #in our for loop if a pipe.x > 0 then remove it from the list - so this is a queue data structure
 
 #so we need a lead_pipe variable and a pipe_queue = []
- 
+old_pipe = pipe(510)
+lead_pipe = new_pipe_obj
+
+current_pipes = [lead_pipe]
+
 while running:
 
     win.fill((0,55, 200))
@@ -92,17 +112,24 @@ while running:
     #win.blit(test_image, (50,y))
 
     y += 0.1
-
     
     x -= 0.05
 
     
 
-    pygame.draw.rect(win, (0, 255, 0), (x, new_pipes["top_y"], new_pipes["pipe_width"], new_pipes["top_pipe_height"]))
-    pygame.draw.rect(win, (0, 255, 0), (x, new_pipes["bottom_y"], new_pipes["pipe_width"], new_pipes["bottom_pipe_height"]))
+    for p in current_pipes:
+        p.x -= 0.05
+        p.draw()
 
-    
-     
+    if lead_pipe.x <= 300:
+        old_pipe = lead_pipe
+        lead_pipe = pipe(500)
+        current_pipes.append(lead_pipe)
+
+    #test then ill just add draw method
+    #pygame.draw.rect(win, (0, 255, 0), (old_pipe.x, old_pipe.get_top_y(), old_pipe.get_width(), old_pipe.get_top_h()))
+    #pygame.draw.rect(win, (0, 255, 0), (old_pipe.x, old_pipe.get_bot_y(), old_pipe.get_width(), old_pipe.get_bot_h()))
+
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
