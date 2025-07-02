@@ -79,10 +79,9 @@ class pipe:
     def draw(self):
         pygame.draw.rect(win, (0, 255, 0), (self.x, self.get_top_y(), self.get_width(), self.get_top_h()))
         pygame.draw.rect(win, (0, 255, 0), (self.x, self.get_bot_y(), self.get_width(), self.get_bot_h()))
-
-y = 200
+    
 x = 450
-
+y = 50
 
 
 
@@ -90,19 +89,13 @@ x = 450
 #new_pipes = calculate_pipe_vertical(calculate_pipe_space())
 new_pipe_obj = pipe(x)
 
-#multiple pipes logic:
-#init new pipe class = lead_pipe
-#when lead_pipe reaches x = num, lead_pipe = pipe() so make a new pipe class #goes outside for loop but inside while loop 
 
-#drawing pipes: for pipe in pipes: pipe.draw() pipe.x -=0.05 
-#above goes in while loop so we draw a pipe and subtract its x value every frame of the game
-#in our for loop if a pipe.x > 0 then remove it from the list - so this is a queue data structure
-
-#so we need a lead_pipe variable and a pipe_queue = []
 old_pipe = pipe(510)
 lead_pipe = new_pipe_obj
-
+ 
 current_pipes = [lead_pipe]
+
+points = 0
 
 while running:
 
@@ -112,23 +105,35 @@ while running:
     #win.blit(test_image, (50,y))
 
     y += 0.1
-    
+         
     x -= 0.05
 
     
 
     for p in current_pipes:
-        p.x -= 0.05
+        p.x -= 0.05 
         p.draw()
+    if current_pipes[0].x < 10:
+        current_pipes.pop(0)
+    
+    if current_pipes[0].x < 50:     
+        points += 1/800  
+       
+        print(points)
+
+    if current_pipes[0].x <= 75 and current_pipes[0].x >= 50:
+        if y <= (current_pipes[0].get_top_h()) or y >= (current_pipes[0].get_bot_y()): 
+            print("collision possible")
+            running = False
+
+    if y <= 0:
+        print("collision possible")
+        running = False
 
     if lead_pipe.x <= 300:
         old_pipe = lead_pipe
         lead_pipe = pipe(500)
         current_pipes.append(lead_pipe)
-
-    #test then ill just add draw method
-    #pygame.draw.rect(win, (0, 255, 0), (old_pipe.x, old_pipe.get_top_y(), old_pipe.get_width(), old_pipe.get_top_h()))
-    #pygame.draw.rect(win, (0, 255, 0), (old_pipe.x, old_pipe.get_bot_y(), old_pipe.get_width(), old_pipe.get_bot_h()))
 
     for event in pygame.event.get():
 
